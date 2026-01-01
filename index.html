@@ -34,7 +34,7 @@
   <script>
     async function loadWeather() {
       try {
-        const res = await fetch("../public/weather.txt", { cache: "no-store" });
+        const res = await fetch("https://mnltake.github.io/weather-page/public/weather.txt, { cache: "no-store" });
         const data = await res.text();
 
         if (!data.startsWith("data:image")) {

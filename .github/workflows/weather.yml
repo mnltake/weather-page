@@ -1,0 +1,38 @@
+name: Update Weather Image Base64
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # 6時間ごと
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install tools
+      run: sudo apt-get install -y jq curl
+
+    - name: Download latest weather PNG
+      run: |
+        JSON=$(curl -s https://www.jma.go.jp/bosai/weather_map/data/list.json)
+        FILE=$(echo "$JSON" | jq -r '.near_monochrome.now[0]')
+        URL="https://www.jma.go.jp/bosai/weather_map/data/png/${FILE}"
+        echo "Downloading $URL"
+        curl -L "$URL" -o weather.png
+
+    - name: Convert to Base64
+      run: |
+        BASE64=$(base64 -w 0 weather.png)
+        echo "data:image/png;base64,$BASE64" > weather.txt
+
+    - name: Commit and push
+      run: |
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git add weather.txt
+        git commit -m "Update weather image"
+        git push

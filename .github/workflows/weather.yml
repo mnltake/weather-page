@@ -31,8 +31,8 @@ jobs:
 
       - name: Convert PNG to Base64
         run: |
-          echo -n "data:image/png;base64," > weather.txt
-          base64 -w 0 weather.png >> weather.txt
+          echo -n "data:image/png;base64," > public/weather.txt
+          base64 -w 0 weather.png >> public/weather.txt
 
       - name: Commit & Push
         run: |

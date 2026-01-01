@@ -2,23 +2,42 @@ name: Update Weather Image
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # 6時間ごと
+    # 日本時間 00, 06, 12, 18 時（UTCでは -9時間）
+    - cron: '0 15,21,3,9 * * *'
   workflow_dispatch:
 
 jobs:
-  update:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Download weather image
-        run: |
-          curl -L -o weather.png https://www.jma.go.jp/bosai/weather_map/data/png/20251229081430_0_Z__C_010000_20251229060000_MET_CHT_JCIspas_JCP600x581_JRjmahp_image.png
+      - name: Create output directory
+        run: mkdir -p public
 
-      - name: Commit and push
+      - name: Download latest weather PNG
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add weather.png
-          git commit -m "Update weather image" || echo "No change"
+          curl -L \
+          "https://www.jma.go.jp/bosai/weather_map/data/list.json" \
+          -o list.json
+
+          PNG=$(jq -r '.near_monochrome.now[0]' list.json)
+
+          curl -L \
+          "https://www.jma.go.jp/bosai/weather_map/data/png/${PNG}" \
+          -o weather.png
+
+      - name: Convert PNG to Base64
+        run: |
+          echo -n "data:image/png;base64," > public/weather.txt
+          base64 -w 0 weather.png >> public/weather.txt
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add public/weather.txt
+          git commit -m "Update weather image" || echo "No changes"
           git push

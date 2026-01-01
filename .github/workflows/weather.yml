@@ -23,7 +23,7 @@ jobs:
           "https://www.jma.go.jp/bosai/weather_map/data/list.json" \
           -o list.json
 
-          PNG=$(jq -r '.near_monochrome.now[0]' list.json)
+          PNG=$(jq -r '.near_monochrome.ft24[0]' list.json)
 
           curl -L \
           "https://www.jma.go.jp/bosai/weather_map/data/png/${PNG}" \

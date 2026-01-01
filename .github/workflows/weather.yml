@@ -24,10 +24,14 @@ jobs:
           -o list.json
 
           PNG=$(jq -r '.near_monochrome.ft24[0]' list.json)
+          PNG_NOW=$(jq -r '.near_monochrome.now[21]' list.json)
 
           curl -L \
           "https://www.jma.go.jp/bosai/weather_map/data/png/${PNG}" \
           -o weather.png
+          curl -L \
+          "https://www.jma.go.jp/bosai/weather_map/data/png/${PNG_NOW}" \
+          -o public/now.png
 
       - name: Convert PNG to Base64
         run: |

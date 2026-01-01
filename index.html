@@ -1,14 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <title>最新天気図</title>
-  <meta http-equiv="refresh" content="300"> <!-- 5分ごとに再読み込み -->
+  <meta charset="UTF-8">
+  <title>気象庁 天気図</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    img {
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 10px;
+      border: 1px solid #444;
+    }
+    #time {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ccc;
+    }
+  </style>
 </head>
+
 <body>
-  <h2>最新の天気図</h2>
+  <h2>最新 天気図</h2>
+  <img id="weather" alt="Loading weather map...">
+  <div id="time"></div>
 
-  <img id="weather" src="../public/weather.txt" alt="weather map" style="width:100%; max-width:800px;">
+  <script>
+    async function loadWeather() {
+      try {
+        const res = await fetch("../public/weather.txt", { cache: "no-store" });
+        const data = await res.text();
 
+        if (!data.startsWith("data:image")) {
+          throw new Error("Invalid image data");
+        }
+
+        document.getElementById("weather").src = data;
+        document.getElementById("time").textContent =
+          "更新: " + new Date().toLocaleString();
+      } catch (e) {
+        document.getElementById("time").textContent =
+          "画像の読み込みに失敗しました";
+        console.error(e);
+      }
+    }
+
+    loadWeather();
+
+    // 10分ごとに自動更新（必要なら変更）
+    setInterval(loadWeather, 10 * 60 * 1000);
+  </script>
 </body>
 </html>

@@ -32,7 +32,7 @@
 <script>
 async function loadWeather() {
   try {
-    const res = await fetch("public/weather.txt?" + Date.now());
+    const res = await fetch("weather.txt?" + Date.now());
     const base64 = await res.text();
 
     document.getElementById("weather").src = base64;

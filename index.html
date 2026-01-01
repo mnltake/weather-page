@@ -1,50 +1,14 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>最新天気図</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body {
-    margin: 0;
-    background: #000;
-    color: #fff;
-    font-family: sans-serif;
-    text-align: center;
-  }
-  #weather {
-    max-width: 100%;
-    height: auto;
-  }
-  #time {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #aaa;
-  }
-</style>
+  <meta charset="utf-8">
+  <title>最新天気図</title>
+  <meta http-equiv="refresh" content="300"> <!-- 5分ごとに再読み込み -->
 </head>
 <body>
+  <h2>最新の天気図</h2>
 
-<h2>最新 天気図（気象庁）</h2>
-<img id="weather" alt="weather map">
-<div id="time"></div>
-
-<script>
-async function loadWeather() {
-  try {
-    const res = await fetch("weather.txt?" + Date.now());
-    const base64 = await res.text();
-
-    document.getElementById("weather").src = base64;
-    document.getElementById("time").textContent =
-      "更新: " + new Date().toLocaleString();
-  } catch (e) {
-    document.getElementById("time").textContent = "読み込み失敗";
-  }
-}
-
-loadWeather();
-</script>
+  <img id="weather" src="../public/weather.txt" alt="weather map" style="width:100%; max-width:800px;">
 
 </body>
 </html>

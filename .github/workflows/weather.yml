@@ -38,7 +38,7 @@ jobs:
         run: |
           echo -n "data:image/png;base64," > public/weather.txt
           base64 -w 0 weather.png >> public/weather.txt
-          cp weather.png public/weather.png
+          cp weather.png public/ft24.png
 
       - name: Commit & Push
         run: |
